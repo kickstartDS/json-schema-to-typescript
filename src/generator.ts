@@ -15,13 +15,13 @@ import {
   TUnion,
   T_UNKNOWN,
 } from './types/AST.js'
-import {log, toSafeString} from './utils.js'
-import {getSchemaName} from '@kickstartds/jsonschema-utils/dist/helpers.js'
+import {log, toSafeString, getSchemaName} from './utils.js'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (
     [
       options.bannerComment,
+      declareReferencedTypeImports(ast, options, ast.standaloneName!),
       declareNamedTypes(ast, options, ast.standaloneName!),
       declareNamedInterfaces(ast, options, ast.standaloneName!),
       declareEnums(ast, options),
@@ -145,11 +145,60 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
         .filter(Boolean)
         .join('\n')
     case 'REFERENCE':
-      return pascalCase(getSchemaName(ast.params))
+      return ``
     default:
       if (hasStandaloneName(ast)) {
         return generateStandaloneType(ast, options)
       }
+      return ''
+  }
+}
+
+function declareReferencedTypeImports(
+  ast: AST,
+  options: Options,
+  rootASTName: string,
+  processed = new Set<AST>(),
+): string {
+  if (processed.has(ast)) {
+    return ''
+  }
+
+  processed.add(ast)
+
+  switch (ast.type) {
+    case 'ARRAY':
+      return [declareReferencedTypeImports(ast.params, options, rootASTName, processed)].filter(Boolean).join('\n')
+    case 'ENUM':
+      return ''
+    case 'INTERFACE':
+      return getSuperTypesAndParams(ast)
+        .map(
+          ast =>
+            (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
+            declareReferencedTypeImports(ast, options, rootASTName, processed),
+        )
+        .filter(Boolean)
+        .join('\n')
+    case 'INTERSECTION':
+    case 'TUPLE':
+    case 'UNION':
+      return [
+        ast.params
+          .map(ast => declareReferencedTypeImports(ast, options, rootASTName, processed))
+          .filter(Boolean)
+          .join('\n'),
+        'spreadParam' in ast && ast.spreadParam
+          ? declareReferencedTypeImports(ast.spreadParam, options, rootASTName, processed)
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join('\n')
+    case 'REFERENCE':
+      return `import type { ${pascalCase(getSchemaName(ast.params))}Props } from './${pascalCase(
+        getSchemaName(ast.params),
+      )}Props'`
+    default:
       return ''
   }
 }
@@ -197,7 +246,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'OBJECT':
       return 'object'
     case 'REFERENCE':
-      return pascalCase(getSchemaName(ast.params))
+      return `${pascalCase(getSchemaName(ast.params))}Props`
     case 'STRING':
       return 'string'
     case 'TUPLE':

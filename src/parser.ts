@@ -2,7 +2,7 @@ import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
 import {pascalCase} from 'pascal-case'
-import {getSchemaName} from '@kickstartds/jsonschema-utils/dist/helpers.js'
+import {getSchemaName} from './utils.js'
 import {Options} from './index.js'
 import {typesOfSchema} from './typesOfSchema.js'
 import {

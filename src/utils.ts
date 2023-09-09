@@ -11,6 +11,10 @@ export function Try<T>(fn: () => T, err: (e: Error) => any): T {
   }
 }
 
+export function getSchemaName(schemaId: string | undefined): string {
+  return (schemaId && schemaId.split('/').pop()?.split('.').shift()) || ''
+}
+
 // keys that shouldn't be traversed by the catchall step
 const BLACKLISTED_KEYS = new Set([
   'id',

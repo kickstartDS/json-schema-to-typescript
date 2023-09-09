@@ -1,7 +1,7 @@
 import test from 'ava'
 
 import {pascalCase} from 'pascal-case'
-import {getSchemaName} from '@kickstartds/jsonschema-utils/dist/helpers.js'
+import {getSchemaName} from '../src/utils.js'
 
 import {link} from '../src/linker.js'
 import {compile} from '../src/index.js'
