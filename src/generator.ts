@@ -1,4 +1,5 @@
 import {memoize, omit} from 'lodash'
+import {pascalCase} from 'pascal-case'
 import {DEFAULT_OPTIONS, Options} from './index.js'
 import {
   AST,
@@ -15,6 +16,7 @@ import {
   T_UNKNOWN,
 } from './types/AST.js'
 import {log, toSafeString} from './utils.js'
+import {getSchemaName} from '@kickstartds/jsonschema-utils/dist/helpers.js'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (
@@ -142,6 +144,8 @@ function declareNamedTypes(ast: AST, options: Options, rootASTName: string, proc
       ]
         .filter(Boolean)
         .join('\n')
+    case 'REFERENCE':
+      return pascalCase(getSchemaName(ast.params))
     default:
       if (hasStandaloneName(ast)) {
         return generateStandaloneType(ast, options)
@@ -193,7 +197,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'OBJECT':
       return 'object'
     case 'REFERENCE':
-      return ast.params
+      return pascalCase(getSchemaName(ast.params))
     case 'STRING':
       return 'string'
     case 'TUPLE':

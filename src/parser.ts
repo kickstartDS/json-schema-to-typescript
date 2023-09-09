@@ -1,6 +1,8 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
+import {pascalCase} from 'pascal-case'
+import {getSchemaName} from '@kickstartds/jsonschema-utils/dist/helpers.js'
 import {Options} from './index.js'
 import {typesOfSchema} from './typesOfSchema.js'
 import {
@@ -241,7 +243,15 @@ function parseNonLiteral(
         type: 'UNION',
       }
     case 'REFERENCE':
-      throw Error(format('Refs should have been resolved by the resolver!', schema))
+      if (!schema.$ref) throw Error(format('Refs should have been resolved by the resolver!', schema))
+      return {
+        comment: `Referenced component ${pascalCase(getSchemaName(schema.$ref))}`,
+        deprecated: false,
+        keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        type: 'REFERENCE',
+        params: schema.$ref,
+      }
     case 'STRING':
       return {
         comment: schema.description,
