@@ -1,7 +1,6 @@
 import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
-import {pascalCase} from 'pascal-case'
 import {Options} from './index.js'
 import {typesOfSchema} from './typesOfSchema.js'
 import {

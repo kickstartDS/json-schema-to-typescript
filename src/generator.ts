@@ -1,5 +1,4 @@
 import {memoize, omit} from 'lodash'
-import {pascalCase} from 'pascal-case'
 import {DEFAULT_OPTIONS, Options} from './index.js'
 import {
   AST,
