@@ -15,7 +15,7 @@ import {
   TUnion,
   T_UNKNOWN,
 } from './types/AST.js'
-import {log, toSafeString, getSchemaName} from './utils.js'
+import {log, toSafeString, getSchemaName, getSchemaModule} from './utils.js'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (
@@ -159,6 +159,7 @@ function declareReferencedTypeImports(
   options: Options,
   rootASTName: string,
   processed = new Set<AST>(),
+  imports = new Set<string>(),
 ): string {
   if (processed.has(ast)) {
     return ''
@@ -168,7 +169,9 @@ function declareReferencedTypeImports(
 
   switch (ast.type) {
     case 'ARRAY':
-      return [declareReferencedTypeImports(ast.params, options, rootASTName, processed)].filter(Boolean).join('\n')
+      return [declareReferencedTypeImports(ast.params, options, rootASTName, processed, imports)]
+        .filter(Boolean)
+        .join('\n')
     case 'ENUM':
       return ''
     case 'INTERFACE':
@@ -176,7 +179,7 @@ function declareReferencedTypeImports(
         .map(
           ast =>
             (ast.standaloneName === rootASTName || options.declareExternallyReferenced) &&
-            declareReferencedTypeImports(ast, options, rootASTName, processed),
+            declareReferencedTypeImports(ast, options, rootASTName, processed, imports),
         )
         .filter(Boolean)
         .join('\n')
@@ -185,19 +188,23 @@ function declareReferencedTypeImports(
     case 'UNION':
       return [
         ast.params
-          .map(ast => declareReferencedTypeImports(ast, options, rootASTName, processed))
+          .map(ast => declareReferencedTypeImports(ast, options, rootASTName, processed, imports))
           .filter(Boolean)
           .join('\n'),
         'spreadParam' in ast && ast.spreadParam
-          ? declareReferencedTypeImports(ast.spreadParam, options, rootASTName, processed)
+          ? declareReferencedTypeImports(ast.spreadParam, options, rootASTName, processed, imports)
           : undefined,
       ]
         .filter(Boolean)
         .join('\n')
     case 'REFERENCE':
-      return `import type { ${pascalCase(getSchemaName(ast.params))}Props } from './${pascalCase(
-        getSchemaName(ast.params),
-      )}Props'`
+      const importName = options.renderImport(ast.params)
+      if (imports.has(importName)) {
+        return ''
+      } else {
+        imports.add(importName)
+        return importName
+      }
     default:
       return ''
   }
