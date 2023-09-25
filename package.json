@@ -1,6 +1,6 @@
 {
   "name": "@kickstartds/json-schema-to-typescript",
-  "version": "13.1.18",
+  "version": "13.1.19",
   "description": "compile json schema to typescript typings",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
