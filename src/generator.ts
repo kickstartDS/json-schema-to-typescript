@@ -15,7 +15,7 @@ import {
   TUnion,
   T_UNKNOWN,
 } from './types/AST.js'
-import {log, toSafeString, getSchemaName, getSchemaModule} from './utils.js'
+import {log, toSafeString} from './utils.js'
 
 export function generate(ast: AST, options = DEFAULT_OPTIONS): string {
   return (
@@ -198,7 +198,7 @@ function declareReferencedTypeImports(
         .filter(Boolean)
         .join('\n')
     case 'REFERENCE':
-      const importName = options.renderImport(ast.params)
+      const importName = options.renderImportStatement(ast.params)
       if (imports.has(importName)) {
         return ''
       } else {
@@ -253,7 +253,7 @@ function generateRawType(ast: AST, options: Options): string {
     case 'OBJECT':
       return 'object'
     case 'REFERENCE':
-      return `${pascalCase(getSchemaName(ast.params))}Props`
+      return options.renderImportName(ast.params)
     case 'STRING':
       return 'string'
     case 'TUPLE':

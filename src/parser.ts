@@ -2,7 +2,6 @@ import {JSONSchema4Type, JSONSchema4TypeName} from 'json-schema'
 import {findKey, includes, isPlainObject, map, memoize, omit} from 'lodash'
 import {format} from 'util'
 import {pascalCase} from 'pascal-case'
-import {getSchemaName} from './utils.js'
 import {Options} from './index.js'
 import {typesOfSchema} from './typesOfSchema.js'
 import {
@@ -245,7 +244,7 @@ function parseNonLiteral(
     case 'REFERENCE':
       if (!schema.$ref) throw Error(format('Refs should have been resolved by the resolver!', schema))
       return {
-        comment: `Referenced component ${pascalCase(getSchemaName(schema.$ref))}`,
+        comment: `Referenced component ${options.renderImportName(schema.$ref)}`,
         deprecated: false,
         keyName,
         standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
