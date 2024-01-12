@@ -5,6 +5,7 @@ import {run as runIdempotenceTests} from './testIdempotence.js'
 import {run as runLinkerTests} from './testLinker.js'
 import {run as runNormalizerTests} from './testNormalizer.js'
 import {run as runUtilsTests} from './testUtils.js'
+import {run as runExternalRefsTests} from './testExternalRefs.js'
 
 runE2ETests()
 
@@ -15,4 +16,5 @@ if (!hasOnly()) {
   runLinkerTests()
   runNormalizerTests()
   runUtilsTests()
+  runExternalRefsTests()
 }

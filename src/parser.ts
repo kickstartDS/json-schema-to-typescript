@@ -241,7 +241,15 @@ function parseNonLiteral(
         type: 'UNION',
       }
     case 'REFERENCE':
-      throw Error(format('Refs should have been resolved by the resolver!', schema))
+      if (!schema.$ref) throw Error(format('Refs should have been resolved by the resolver!', schema))
+      return {
+        comment: `Referenced component ${options.renderImportName(schema.$ref)}`,
+        deprecated: false,
+        keyName,
+        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
+        type: 'REFERENCE',
+        params: schema.$ref,
+      }
     case 'STRING':
       return {
         comment: schema.description,

@@ -1,6 +1,6 @@
 {
   "name": "@kickstartds/json-schema-to-typescript",
-  "version": "13.1.7",
+  "version": "13.1.20",
   "description": "compile json schema to typescript typings",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -30,7 +30,6 @@
     "tdd": "concurrently -r -p '' -k 'npm run watch' 'npm run watch:test'",
     "test": "npm run pre-test && ava --timeout=300s --verbose",
     "stresstest": "seq 1 10 | xargs -I{} npm test",
-    "postinstall": "patch-package",
     "prepublishOnly": "npm test",
     "pre-test": "npm run clean && npm run format-check && npm run build:server && npm run build:test",
     "watch": "tsup src/index.ts src/cli.ts --watch",
@@ -38,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bcherny/json-schema-to-typescript.git"
+    "url": "git+https://github.com/kickstartds/json-schema-to-typescript.git"
   },
   "keywords": [
     "json",
@@ -71,8 +70,6 @@
     "lodash-es": "^4.17.21",
     "minimist": "^1.2.6",
     "mkdirp": "^1.0.4",
-    "patch-package": "^8.0.0",
-    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.6.2"
   },
   "devDependencies": {
@@ -93,6 +90,8 @@
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "rimraf": "^3.0.2",
     "shx": "^0.3.4",
     "tsify": "^5.0.4",
@@ -105,7 +104,8 @@
     ],
     "ignoredByWatcher": [
       "./src"
-    ]
+    ],
+    "snapshotDir": "./test/__snapshots__"
   },
   "browserify": {
     "transform": [

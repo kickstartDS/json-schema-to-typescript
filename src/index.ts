@@ -32,6 +32,14 @@ export interface Options {
    */
   bannerComment: string
   /**
+   * Rendering function for the import name added when processing a reference.
+   */
+  renderImportName: (reference: string) => string
+  /**
+   * Rendering function for the import itself when processing a reference..
+   */
+  renderImportStatement: (reference: string) => string
+  /**
    * Root directory for resolving [`$ref`](https://tools.ietf.org/id/draft-pbryan-zyp-json-ref-03.html)s.
    */
   cwd: string
@@ -87,6 +95,8 @@ export const DEFAULT_OPTIONS: Options = {
 * DO NOT MODIFY IT BY HAND. Instead, modify the source JSONSchema file,
 * and run json-schema-to-typescript to regenerate this file.
 */`,
+  renderImportName: reference => reference,
+  renderImportStatement: reference => reference,
   cwd: process.cwd(),
   declareExternallyReferenced: true,
   enableConstEnums: true,
